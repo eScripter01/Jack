@@ -62,13 +62,20 @@ module.exports = {
         guild.channels.cache
           .filter(ch => ch.isVoiceBased())
           .forEach(async (channel) => {
-            channel.members.forEach(async (member) => {
-              if (member.user.bot) return;
-              await addXp(guild.id, member.id, XP_PER_INTERVAL);
-            });
+            // Filtrer les membres pour exclure les bots
+            const realMembers = channel.members.filter(m => !m.user.bot);
+            // Nombre de membres (non-bots) dans le vocal
+            const nbRealMembers = realMembers.size;
+            
+            // Pour chaque membre non-bot présent
+            for (const member of realMembers.values()) {
+              // Donne "nbRealMembers" XP à chaque membre
+              await addXp(guild.id, member.id, nbRealMembers);
+            }
           });
       });
     }, VOCAL_INTERVAL_MS);
+
   },
 };
 
