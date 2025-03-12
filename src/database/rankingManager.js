@@ -1,5 +1,6 @@
 // src/database/rankingManager.js
 const { getPool } = require('./db'); // ton module de connexion MySQL
+const { addXp } = require('./xpManager'); // Ajoute cette ligne en haut du fichier
 
 async function createWorksTablesIfNeeded(guildId) {
   const pool = getPool();
@@ -129,6 +130,8 @@ async function rateWork(guildId, userId, type, rawTitle, rating) {
         average_rating = ?
     WHERE id = ?
   `, [ratingCount, ratingSum, newAverage, workId]);
+
+  await addXp(guildId, userId, 5);
 }
 
 /**
